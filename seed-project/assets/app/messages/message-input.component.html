@@ -1,0 +1,36 @@
+<div class="col-md-8 col-md-offset-2">
+<form (ngSubmit)="onSubmit(f)" #f="ngForm">
+    <div class="form-group">
+        <label for="content">content</label>
+        <input type="text" 
+        id="content"
+        class="form-control" 
+        [ngModel]="message?.content" 
+        name="content">
+    </div>
+    <div class="form-group">
+        <label for="upload">upload</label>
+        <input type="file" 
+        id="uploader"
+        class="form-control" 
+        name="uploader"
+        [(ngModel)]="upload"
+         #uploader
+        />
+        </div>
+        <div class="progress-bar" role="progressbar">
+           
+        </div>
+            
+        <div><button class="btn btn-danger" type="button" (click)="cancelAll">Cancel</button></div>
+    
+    
+    
+    <button class="btn btn-primary"  type="submit"  >Save</button>
+     <button class="btn btn-danger"  type="button" (click)="onClear(f)" >clear</button>
+    
+    
+</form>
+</div>
+    
+    

@@ -1,0 +1,12 @@
+
+<div id="lists" class="jumbotron">
+<ul class="list-group" >
+<li class="list-group-item" *ngFor="let user of userlistchild"> 
+    <a class="list-group-item" (click)="sendtouser(user)">
+    <p class="text-danger">{{user.name}}</p><p *ngIf='checkunreadmessages(user.id)'>you have {{unread}} unread messages</p> 
+    <p class="text-success" *ngIf="checkonline(user.Status)">online</p>
+    <p class="text-success" *ngIf="checkoffline(user.Status)">offline</p>
+    </a>
+    </li>
+ </ul>
+</div>

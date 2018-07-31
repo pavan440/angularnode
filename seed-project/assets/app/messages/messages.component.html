@@ -1,0 +1,13 @@
+<div class="container">
+    <div *ngIf= "checksignin()"class="row">
+       <app-message-input ></app-message-input>
+    </div>
+    <div *ngIf="checksignin()" class="row">
+        <app-message-list></app-message-list>
+    </div>
+    
+        <div *ngIf="checksignout()">
+     <p class="text-warning">Go to signin and come back</p>
+
+    </div>
+    </div>

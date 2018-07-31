@@ -1,0 +1,25 @@
+<div class="col-md-8 col-md-offset-2">
+<div id="lists" class="jumbotron">
+<ul class="list-group" >
+<li class="list-group-item" *ngFor="let friend of friendlist"> 
+
+    <p>{{friend.fname}}</p>
+    <div>
+    <button type='button' *ngIf='checksentstatusbutton(friend.sentrequest,friend.receivedrequest)' 
+    class='primary-button' (click)="sentfriendrequest(friend.id)" #addfriend> 
+    Addfriend
+    </button>
+    </div>
+<div *ngIf='checksentstatus(friend.sentrequest)'>
+    <p>Request Pending</p>
+</div>
+<div *ngIf='updateconfirmfriend(friend.receivedrequest)'><p>Added to friendlist</p></div>
+<div *ngIf='checkstatus(friend.receivedrequest)'>
+    <button type='button'  (click)="confrimfriendrequest(friend.id)">
+        confirmrequest
+    </button>
+</div>
+</li>
+ </ul>
+</div> 
+</div>

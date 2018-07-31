@@ -1,0 +1,17 @@
+<article class="panel panel-default">
+                <div class="panel-body">
+                    {{message.content}}
+                   <div *ngIf="checkimage()"> <img [src]="imagepath" alt="Girl in a jacket" width="300" height="300"></div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="author">
+                       <p>Posted by {{message.username}} </p>
+                    </div>
+                   <div class="config" *ngIf="checkuser()">
+                       <a  (click)="onEdit()">Edit</a>
+                       <a  (click)="onDelete()">Delete</a>
+                   </div> 
+                   
+         </footer>
+    </article>
+            

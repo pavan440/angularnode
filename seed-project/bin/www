@@ -1,0 +1,224 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('node-rest:server');
+var http = require('http');
+var userController=require('../controllers/UserController');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '8080');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+ io.on('connection', function (socket) {
+   socket.emit('message', { hello: 'world' });
+   socket.on('UserId',function(data){
+       console.log(data==null);
+       if(data==null){
+           console.log("emitting login");
+           socket.emit('Error_Login','login');
+           
+       }
+       else{
+           console.log(data);
+      userController.findbyId(data,function(err,user){
+        console.log("the value after the user is retuned by usercontroller findbyid");
+         console.log(user);
+         socket.emit('Username',user.firstname);
+        if(err){
+           socket.emit('Error_UserNotFound', 'User not found');
+       }else{
+       socket.join('messenger');
+       userController.saveuser(user._id,'login',function(err,updateduser){
+         if(err){
+             socket.emit('Error_SavingUser', 'error please login ');
+          }
+          else{
+           socket.join(data);
+           console.log('socketjoined ',data);
+          //user joins the messengeer room
+       io.to('messenger').emit('updateuserlist');
+       socket.on('disconnect',function(){
+           console.log("disconnecting");
+         userController.saveuser(updateduser._id,'logout',function(err,updateuser){
+           if(err){
+             socket.emit('error', 'error while logout');
+           }
+           io.to('messenger').emit('updateuserlist');
+           socket.leave(data);
+           socket.leave('messenger');
+           
+         });
+       });//end of socketdiconnected
+       }});
+     } });//end of user findbyid
+      
+     
+   }});//end of socket(USERID)
+   socket.on('sentupdateduserlist',function(Id){
+       console.log('sending update userlist');
+     userController.userfriendslist(Id,function(err,userfriends){
+        if(err){
+         socket.emit('error', 'error please login ');
+       }
+       console.log("data emitted");
+       console.log(Id);
+       io.to(Id).emit('updateUserlist',userfriends);
+       console.log('check it on client');
+     });
+     });
+     socket.on('privatechat',function(sender){
+         console.log('private chat recived');
+        var privatemessage=JSON.parse(sender);
+        console.log(sender);
+        console.log(privatemessage);
+       socket.join(privatemessage.touserid);
+       io.to(privatemessage.touserid).emit('privatemessage',{msg:privatemessage.msg,tousername:privatemessage.tousername,touserid:privatemessage.touserid,fromuserid:privatemessage.fromuserid,fromusername:privatemessage.fromusername});
+       socket.leave(privatemessage.touserid);
+       console.log("socket left");
+     });
+     
+ });
+/* io.on('connection', function (socket) {
+   socket.emit('message', { hello: 'world' });
+   socket.on('UserId', function (data) {
+    console.log(data);
+    //finding the user
+      userController.findbyId(data,function(err,user){
+        console.log("the value after the user is retuned by usercontroller findbyid");
+         console.log(user);
+        if(err){
+           socket.emit('error', 'error please login ');
+       }
+       socket.join('messenger');
+       userController.saveuser(user._id,'login',function(err,updateduser){
+          if(err){
+             socket.emit('error', 'error please login ');
+          }
+           socket.join(user._id);
+          //user joins the messengeer room
+       io.to('messenger').emit('updateuserlist');
+      
+       });//end of saveuser
+      });//end of socket.onuserid
+       
+      //populate the status of the userfriendlist once the user joins room
+      socket.on('sentupdateduserlist',function(Id){ 
+      userController.userfriendslist(Id,function(err,userfriends){
+       if(err){
+         socket.emit('error', 'error please login ');
+       }
+       console.log("data emitted");
+       io.to(Id).emit('updateUserlist',userfriends);
+       console.log('check it on client');
+       });//end of userfriendslist
+        
+      });//end of updateuserlist
+    
+     
+     socket.on('privatechat',function(sender){
+       socket.join(sender._id);
+       io.to(sender._id).emit('privatemessage',data.message);
+       socket.leave(data._id);
+     });
+     
+       socket.on('disconnect',function(data){
+         userController.saveuser(data._id,'logout',function(err,updateduser){
+           if(err){
+             socket.emit('error', 'error while logout');
+           }
+           io.to('messenger').emit('updateuserlist');
+           socket.leave(updateuser._id);
+           socket.leave('messenger');
+           
+         });
+       });//end of disconnectevent
+       
+      
+      });//
+      
+  
+   
+  
+  
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+

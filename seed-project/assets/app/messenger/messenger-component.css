@@ -1,0 +1,74 @@
+.split {
+  height:100%;
+  position: fixed;
+  z-index: 1;
+  overflow-x: scroll;
+  padding-top: 20px;
+}
+
+/* Control the left side */
+.left {
+  left: 15px;
+  width:35%;
+  background-color:white;
+}
+
+/* Control the right side */
+.right {
+  right: 15px;
+  width:65%;
+  background-color:white;
+}
+.forms{
+    position: absolute;
+    
+    background-color: blue;
+}
+.messages{
+    position: absolute;
+    
+    background-color: red;
+}
+.centered {
+    height:100%;
+    width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background-color: yellow;
+}
+
+/* Style the image inside the centered container, if needed */
+.centered img {
+  width: 150px;
+  border-radius: 50%;
+}
+#messagesarea{
+    height:70%;
+    border-style: solid;
+    background-color:white;
+    overflow-y: auto;
+    padding: 0;
+    margin:0;
+}
+.messageform{
+  margin: 0;  
+}
+#messageheader{
+    position: relative;
+    padding: 0;
+    padding-top: 0;
+    margin-left:0;
+    margin-right:0;
+    margin-top:0;
+    width:100%;
+    border-style:solid;
+    /*border-color: red;
+    background-color:blue;*/
+    
+}
+#messages{
+    
+}
