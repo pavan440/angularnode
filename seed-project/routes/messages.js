@@ -11,9 +11,9 @@ var os=require('os');
 var User= require('../models/user');
 var sharp=require('sharp');
 var knoxClient=knox.createClient({
-    key:"AKIAIBTFRUNTZJ564IWQ",
-    secret:"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",
-    bucket:"mediamedia449"
+    key:"",
+    secret:"",
+    bucket:"xxxxxmedia449"
 });
 
 router.get('/:id',function(req,res,next){
